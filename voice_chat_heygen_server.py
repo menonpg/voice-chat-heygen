@@ -1106,7 +1106,7 @@ HTML_CONTENT = '''
                     body: JSON.stringify({
                         session_id: sessionId,
                         text: text,
-                        task_type: 'talk'
+                        task_type: 'repeat'  // 'repeat' = just speak our text, 'talk' = HeyGen's AI responds
                     })
                 });
                 
