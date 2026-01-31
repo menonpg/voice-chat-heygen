@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Speech API Demo</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        .subtitle {
+            color: rgba(255,255,255,0.8);
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        .card h2 {
+            color: #333;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .btn.recording {
+            background: linear-gradient(135deg, #f5576c 0%, #f093fb 100%);
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(245, 87, 108, 0.4); }
+            50% { box-shadow: 0 0 0 15px rgba(245, 87, 108, 0); }
+        }
+        textarea, input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            margin-bottom: 15px;
+            transition: border-color 0.2s;
+        }
+        textarea:focus, input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .output-box {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            min-height: 100px;
+            font-size: 18px;
+            color: #333;
+            border: 2px dashed #e0e0e0;
+        }
+        .output-box.active {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+        .status {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+        .status.ready { background: #e8f5e9; color: #2e7d32; }
+        .status.listening { background: #fff3e0; color: #f57c00; }
+        .status.error { background: #ffebee; color: #c62828; }
+        .controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #555;
+        }
+        .voice-select {
+            display: flex;
+            gap: 10px;
+            align-items: end;
+        }
+        .voice-select select {
+            flex: 1;
+            margin-bottom: 0;
+        }
+        .confidence {
+            font-size: 14px;
+            color: #888;
+            margin-top: 10px;
+        }
+        .not-supported {
+            background: #ffebee;
+            color: #c62828;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎤 Web Speech API Demo</h1>
+        <p class="subtitle">Browser-native Speech Recognition & Synthesis - No API keys required!</p>
+        
+        <!-- Speech Recognition Section -->
+        <div class="card">
+            <h2>🎙️ Speech-to-Text (Recognition)</h2>
+            
+            <div id="stt-status" class="status ready">● Ready</div>
+            
+            <div class="controls">
+                <button id="stt-btn" class="btn" onclick="toggleRecognition()">
+                    🎤 Start Listening
+                </button>
+                <select id="stt-lang" style="width: auto; margin: 0;">
+                    <option value="en-US">English (US)</option>
+                    <option value="en-GB">English (UK)</option>
+                    <option value="es-ES">Spanish</option>
+                    <option value="fr-FR">French</option>
+                    <option value="de-DE">German</option>
+                    <option value="ja-JP">Japanese</option>
+                    <option value="zh-CN">Chinese</option>
+                </select>
+            </div>
+            
+            <label>Recognized Text:</label>
+            <div id="stt-output" class="output-box">
+                Click "Start Listening" and speak...
+            </div>
+            <div id="stt-confidence" class="confidence"></div>
+        </div>
+        
+        <!-- Speech Synthesis Section -->
+        <div class="card">
+            <h2>🔊 Text-to-Speech (Synthesis)</h2>
+            
+            <label for="tts-text">Text to Speak:</label>
+            <textarea id="tts-text" rows="3" placeholder="Enter text to convert to speech...">Hello! This is the Web Speech API, a free browser-native text to speech solution.</textarea>
+            
+            <div class="voice-select">
+                <div style="flex: 1;">
+                    <label for="tts-voice">Voice:</label>
+                    <select id="tts-voice"></select>
+                </div>
+                <div style="width: 100px;">
+                    <label for="tts-rate">Speed:</label>
+                    <input type="range" id="tts-rate" min="0.5" max="2" step="0.1" value="1" style="margin: 0;">
+                </div>
+                <div style="width: 100px;">
+                    <label for="tts-pitch">Pitch:</label>
+                    <input type="range" id="tts-pitch" min="0" max="2" step="0.1" value="1" style="margin: 0;">
+                </div>
+            </div>
+            
+            <div class="controls" style="margin-top: 15px;">
+                <button class="btn" onclick="speak()">🔊 Speak</button>
+                <button class="btn" onclick="stopSpeaking()" style="background: #666;">⏹️ Stop</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ===== Speech Recognition =====
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        let recognition = null;
+        let isListening = false;
+
+        if (SpeechRecognition) {
+            recognition = new SpeechRecognition();
+            recognition.continuous = true;
+            recognition.interimResults = true;
+            recognition.maxAlternatives = 1;
+
+            recognition.onstart = () => {
+                isListening = true;
+                document.getElementById('stt-btn').classList.add('recording');
+                document.getElementById('stt-btn').textContent = '🔴 Stop Listening';
+                document.getElementById('stt-status').className = 'status listening';
+                document.getElementById('stt-status').textContent = '● Listening...';
+                document.getElementById('stt-output').classList.add('active');
+            };
+
+            recognition.onend = () => {
+                isListening = false;
+                document.getElementById('stt-btn').classList.remove('recording');
+                document.getElementById('stt-btn').textContent = '🎤 Start Listening';
+                document.getElementById('stt-status').className = 'status ready';
+                document.getElementById('stt-status').textContent = '● Ready';
+                document.getElementById('stt-output').classList.remove('active');
+            };
+
+        // Store finalized text separately (declared outside for scope)
+        let finalizedText = '';
+            
+            recognition.onresult = (event) => {
+                let interimTranscript = '';
+
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    const transcript = event.results[i][0].transcript;
+                    if (event.results[i].isFinal) {
+                        finalizedText += transcript + ' ';
+                        const confidence = (event.results[i][0].confidence * 100).toFixed(1);
+                        document.getElementById('stt-confidence').textContent = `Confidence: ${confidence}%`;
+                    } else {
+                        interimTranscript = transcript; // Just use latest interim, don't append
+                    }
+                }
+
+                const output = document.getElementById('stt-output');
+                // Show finalized text + current interim (in gray)
+                output.innerHTML = finalizedText + (interimTranscript ? `<i style="color:#888">${interimTranscript}</i>` : '');
+            };
+
+            recognition.onerror = (event) => {
+                console.error('Speech recognition error:', event.error);
+                document.getElementById('stt-status').className = 'status error';
+                document.getElementById('stt-status').textContent = `● Error: ${event.error}`;
+            };
+        } else {
+            document.querySelector('.card:first-of-type').innerHTML = `
+                <h2>🎙️ Speech-to-Text (Recognition)</h2>
+                <div class="not-supported">
+                    ⚠️ Speech Recognition is not supported in this browser.<br>
+                    Please use Chrome, Edge, or Safari.
+                </div>
+            `;
+        }
+
+        function toggleRecognition() {
+            if (!recognition) return;
+            
+            recognition.lang = document.getElementById('stt-lang').value;
+            
+            if (isListening) {
+                recognition.stop();
+            } else {
+                finalizedText = ''; // Reset finalized text
+                document.getElementById('stt-output').innerHTML = '';
+                document.getElementById('stt-confidence').textContent = '';
+                recognition.start();
+            }
+        }
+
+        // ===== Speech Synthesis =====
+        const synth = window.speechSynthesis;
+        let voices = [];
+
+        function loadVoices() {
+            voices = synth.getVoices();
+            const select = document.getElementById('tts-voice');
+            select.innerHTML = '';
+            
+            voices.forEach((voice, i) => {
+                const option = document.createElement('option');
+                option.value = i;
+                option.textContent = `${voice.name} (${voice.lang})`;
+                if (voice.default) option.selected = true;
+                select.appendChild(option);
+            });
+        }
+
+        // Voices load async in some browsers
+        if (synth.onvoiceschanged !== undefined) {
+            synth.onvoiceschanged = loadVoices;
+        }
+        loadVoices();
+
+        function speak() {
+            const text = document.getElementById('tts-text').value;
+            if (!text) return;
+
+            // Cancel any ongoing speech
+            synth.cancel();
+
+            const utterance = new SpeechSynthesisUtterance(text);
+            const voiceIndex = document.getElementById('tts-voice').value;
+            utterance.voice = voices[voiceIndex];
+            utterance.rate = parseFloat(document.getElementById('tts-rate').value);
+            utterance.pitch = parseFloat(document.getElementById('tts-pitch').value);
+
+            synth.speak(utterance);
+        }
+
+        function stopSpeaking() {
+            synth.cancel();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+# Environment variables (NEVER commit this!)
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.so
+.Python
+venv/
+.venv/
+
+# Cache
+cache/
+*.wav
+*.mp3
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+GIT/
