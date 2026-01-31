@@ -1034,7 +1034,7 @@ HTML_CONTENT = '''
             const answer = await peerConnection.createAnswer();
             await peerConnection.setLocalDescription(answer);
             
-            // Send answer to HeyGen
+            // Send answer to HeyGen (must be {type, sdp} object)
             console.log('Sending SDP answer to HeyGen...');
             const startResponse = await fetch('https://api.heygen.com/v1/streaming.start', {
                 method: 'POST',
@@ -1044,7 +1044,10 @@ HTML_CONTENT = '''
                 },
                 body: JSON.stringify({
                     session_id: sessionId,
-                    sdp: answer.sdp
+                    sdp: {
+                        type: 'answer',
+                        sdp: answer.sdp
+                    }
                 })
             });
             
