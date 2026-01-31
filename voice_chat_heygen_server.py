@@ -1141,6 +1141,46 @@ HTML_CONTENT = '''
                 }
             });
         });
+        
+        // CRITICAL: Clean up session on page close/refresh
+        async function cleanupSession() {
+            if (sessionId && heygenApiKey) {
+                try {
+                    // Use fetch with keepalive for reliable delivery during page unload
+                    await fetch('https://api.heygen.com/v1/streaming.stop', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Api-Key': heygenApiKey
+                        },
+                        body: JSON.stringify({ session_id: sessionId }),
+                        keepalive: true  // Ensures request completes even if page closes
+                    });
+                    console.log('Session cleaned up:', sessionId);
+                } catch (e) {
+                    console.error('Cleanup failed:', e);
+                }
+            }
+        }
+        
+        window.addEventListener('beforeunload', (event) => {
+            cleanupSession();
+        });
+        
+        // Also clean up if tab becomes hidden for a while (mobile)
+        let hiddenTimeout = null;
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'hidden') {
+                // Give 30 seconds before cleaning up (user might just be switching tabs)
+                hiddenTimeout = setTimeout(cleanupSession, 30000);
+            } else {
+                // Tab is visible again, cancel cleanup
+                if (hiddenTimeout) {
+                    clearTimeout(hiddenTimeout);
+                    hiddenTimeout = null;
+                }
+            }
+        });
     </script>
 </body>
 </html>
