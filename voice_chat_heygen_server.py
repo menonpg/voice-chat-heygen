@@ -1048,23 +1048,7 @@ HTML_CONTENT = '''
             const answer = await peerConnection.createAnswer();
             await peerConnection.setLocalDescription(answer);
             
-            // Wait for ICE gathering to complete (or timeout after 2s)
-            if (peerConnection.iceGatheringState !== 'complete') {
-                await new Promise((resolve) => {
-                    const checkState = () => {
-                        if (peerConnection.iceGatheringState === 'complete') {
-                            resolve();
-                        }
-                    };
-                    peerConnection.onicegatheringstatechange = checkState;
-                    setTimeout(resolve, 2000); // timeout fallback
-                });
-            }
-            console.log('ICE gathering state:', peerConnection.iceGatheringState);
-            
             // Send answer to HeyGen (must be {type, sdp} object)
-            // Use the local description which now includes gathered ICE candidates
-            const finalSdp = peerConnection.localDescription.sdp;
             console.log('Sending SDP answer to HeyGen...');
             const startResponse = await fetch('https://api.heygen.com/v1/streaming.start', {
                 method: 'POST',
@@ -1076,7 +1060,7 @@ HTML_CONTENT = '''
                     session_id: sessionId,
                     sdp: {
                         type: 'answer',
-                        sdp: finalSdp
+                        sdp: answer.sdp
                     }
                 })
             });
