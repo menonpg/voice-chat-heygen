@@ -652,29 +652,39 @@ HTML_CONTENT = '''
                 <div class="config-section">
                     <label>Avatar:</label>
                     <select id="avatarId">
-                        <optgroup label="👩 Women">
-                            <option value="Abigail_expressive_2024112501">Abigail (Expressive)</option>
-                            <option value="Abigail_standing_office_front">Abigail (Office Standing)</option>
-                            <option value="Abigail_sitting_sofa_front">Abigail (Sofa Sitting)</option>
-                            <option value="Anna_public_3_20240108">Anna (Professional)</option>
-                            <option value="Adriana_Business_Front_public">Adriana (Business)</option>
-                            <option value="Adriana_BizTalk_Front_public">Adriana (BizTalk)</option>
-                            <option value="Bella_public_3">Bella (Casual)</option>
-                            <option value="Briana_public_3">Briana (Professional)</option>
+                        <optgroup label="👩 Women - Professional">
+                            <option value="Marianne_ProfessionalLook_public">Marianne (Professional)</option>
+                            <option value="Marianne_ProfessionalLook2_public">Marianne (Professional 2)</option>
+                            <option value="Katya_ProfessionalLook_public">Katya (Professional)</option>
+                            <option value="Katya_ProfessionalLook2_public">Katya (Professional 2)</option>
+                            <option value="Alessandra_ProfessionalLook_public">Alessandra (Professional)</option>
+                            <option value="Anastasia_ProfessionalLook_public">Anastasia (Professional)</option>
+                            <option value="Amina_ProfessionalLook_public">Amina (Professional)</option>
+                            <option value="Rika_ProfessionalLook_public">Rika (Professional)</option>
                         </optgroup>
-                        <optgroup label="👨 Men">
-                            <option value="Adrian_public_20240312">Adrian (Blue Sweater)</option>
-                            <option value="Adrian_public_2_20240312">Adrian (Blue Suit)</option>
-                            <option value="Aditya_public_4">Aditya (Brown Blazer)</option>
-                            <option value="Aditya_public_1">Aditya (Blue Blazer)</option>
-                            <option value="Albert_public_1">Albert (Blue Suit)</option>
-                            <option value="Albert_public_2">Albert (Blue Blazer)</option>
-                            <option value="Tyler_public_2">Tyler (Professional)</option>
-                            <option value="Josh_lite3_20230714">Josh (Lite)</option>
+                        <optgroup label="👩 Women - Casual/Sitting">
+                            <option value="Marianne_CasualLook_public">Marianne (Casual)</option>
+                            <option value="Marianne_Chair_Sitting_public">Marianne (Sitting)</option>
+                            <option value="Katya_CasualLook_public">Katya (Casual)</option>
+                            <option value="Katya_Chair_Sitting_public">Katya (Sitting)</option>
+                            <option value="Alessandra_CasualLook_public">Alessandra (Casual)</option>
+                            <option value="Alessandra_Chair_Sitting_public">Alessandra (Sitting)</option>
                         </optgroup>
-                        <optgroup label="🌍 Diverse">
-                            <option value="Aiko_public">Aiko (Asian)</option>
-                            <option value="Wayne_20240426">Wayne (Casual)</option>
+                        <optgroup label="👨 Men - Professional">
+                            <option value="Thaddeus_ProfessionalLook_public">Thaddeus (Professional)</option>
+                            <option value="Thaddeus_ProfessionalLook2_public">Thaddeus (Professional 2)</option>
+                            <option value="Pedro_ProfessionalLook_public">Pedro (Professional)</option>
+                            <option value="Pedro_ProfessionalLook2_public">Pedro (Professional 2)</option>
+                            <option value="Graham_ProfessionalLook_public">Graham (Professional)</option>
+                            <option value="Anthony_ProfessionalLook_public">Anthony (Professional)</option>
+                        </optgroup>
+                        <optgroup label="👨 Men - Casual/Sitting">
+                            <option value="Thaddeus_CasualLook_public">Thaddeus (Casual)</option>
+                            <option value="Thaddeus_Chair_Sitting_public">Thaddeus (Sitting)</option>
+                            <option value="Pedro_CasualLook_public">Pedro (Casual)</option>
+                            <option value="Pedro_Chair_Sitting_public">Pedro (Sitting)</option>
+                            <option value="Graham_CasualLook_public">Graham (Casual)</option>
+                            <option value="Anthony_CasualLook_public">Anthony (Casual)</option>
                         </optgroup>
                     </select>
                     
