@@ -943,8 +943,7 @@ HTML_CONTENT = '''
                         voice: {
                             voice_id: voiceId
                         },
-                        quality: 'high',
-                        version: 'v2'
+                        quality: 'high'
                     })
                 });
                 
@@ -1006,8 +1005,7 @@ HTML_CONTENT = '''
             
             if (!serverSdp) {
                 console.error('SDP extraction failed. sdpData was:', sdpData);
-                alert('SDP Debug Info:\n\nsdpData type: ' + typeof sdpData + '\nsdpData: ' + JSON.stringify(sdpData).substring(0, 500));
-                throw new Error('No SDP received from HeyGen - check console for details');
+                throw new Error('No SDP received from HeyGen');
             }
             
             peerConnection = new RTCPeerConnection({
