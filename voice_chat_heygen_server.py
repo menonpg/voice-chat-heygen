@@ -1035,7 +1035,8 @@ HTML_CONTENT = '''
             await peerConnection.setLocalDescription(answer);
             
             // Send answer to HeyGen
-            await fetch('https://api.heygen.com/v1/streaming.start', {
+            console.log('Sending SDP answer to HeyGen...');
+            const startResponse = await fetch('https://api.heygen.com/v1/streaming.start', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -1046,6 +1047,13 @@ HTML_CONTENT = '''
                     sdp: answer.sdp
                 })
             });
+            
+            const startResult = await startResponse.json();
+            console.log('streaming.start response:', startResult);
+            
+            if (startResult.code !== 100) {
+                throw new Error('Failed to start stream: ' + (startResult.message || 'Unknown error'));
+            }
         }
         
         // Handle user message
@@ -1085,6 +1093,7 @@ HTML_CONTENT = '''
             try {
                 updateStatus('🗣️ Avatar is speaking...', 'success');
                 
+                console.log('Sending text to avatar:', text);
                 const response = await fetch('https://api.heygen.com/v1/streaming.task', {
                     method: 'POST',
                     headers: {
@@ -1098,8 +1107,11 @@ HTML_CONTENT = '''
                     })
                 });
                 
-                if (!response.ok) {
-                    throw new Error('Failed to send message to avatar');
+                const taskResult = await response.json();
+                console.log('streaming.task response:', taskResult);
+                
+                if (taskResult.code !== 100) {
+                    throw new Error('Avatar speak failed: ' + (taskResult.message || 'Unknown error'));
                 }
                 
                 // Wait a bit for avatar to finish
