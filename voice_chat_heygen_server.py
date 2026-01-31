@@ -289,6 +289,39 @@ async def get_heygen_key():
     """Get HeyGen API key for client-side use."""
     return {"api_key": HEYGEN_API_KEY}
 
+@app.post("/api/heygen/cleanup")
+async def cleanup_heygen_sessions():
+    """Stop all active HeyGen streaming sessions."""
+    if not HEYGEN_API_KEY:
+        return {"error": "HeyGen API key not configured", "stopped": 0}
+    
+    stopped = 0
+    try:
+        async with httpx.AsyncClient(timeout=15) as client:
+            # List active sessions
+            list_resp = await client.get(
+                "https://api.heygen.com/v1/streaming.list",
+                headers={"X-Api-Key": HEYGEN_API_KEY}
+            )
+            data = list_resp.json()
+            sessions = data.get("data", {}).get("sessions", [])
+            
+            # Stop each session
+            for session in sessions:
+                sid = session.get("session_id")
+                if sid:
+                    await client.post(
+                        "https://api.heygen.com/v1/streaming.stop",
+                        headers={"X-Api-Key": HEYGEN_API_KEY, "Content-Type": "application/json"},
+                        json={"session_id": sid}
+                    )
+                    stopped += 1
+                    print(f"Stopped session: {sid}")
+            
+            return {"status": "ok", "stopped": stopped, "message": f"Stopped {stopped} session(s)"}
+    except Exception as e:
+        return {"error": str(e), "stopped": stopped}
+
 @app.get("/", response_class=HTMLResponse)
 async def index():
     return HTML_CONTENT
@@ -733,6 +766,7 @@ HTML_CONTENT = '''
                 <div class="controls">
                     <button id="startBtn" class="btn btn-primary" onclick="startSession()">🚀 Start Session</button>
                     <button id="stopBtn" class="btn btn-danger" disabled onclick="stopSession()">⏹️ Stop Session</button>
+                    <button class="btn btn-secondary" onclick="cleanupSessions()" title="Clear all stuck HeyGen sessions">🧹 Cleanup</button>
                 </div>
             </div>
             
@@ -1136,6 +1170,22 @@ HTML_CONTENT = '''
             chatBox.innerHTML = '';
             await fetch('/api/clear', { method: 'POST' });
             updateStatus('Chat cleared', 'success');
+        }
+        
+        // Cleanup stuck HeyGen sessions
+        async function cleanupSessions() {
+            updateStatus('🧹 Cleaning up stuck sessions...', 'warning');
+            try {
+                const response = await fetch('/api/heygen/cleanup', { method: 'POST' });
+                const data = await response.json();
+                if (data.error) {
+                    updateStatus('Cleanup error: ' + data.error, 'error');
+                } else {
+                    updateStatus(`✅ Cleaned up ${data.stopped} session(s). Try Start Session again!`, 'success');
+                }
+            } catch (error) {
+                updateStatus('Cleanup failed: ' + error.message, 'error');
+            }
         }
         
         // Save/load config from localStorage
