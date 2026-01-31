@@ -1,4 +1,4 @@
-# Environment variables (NEVER commit this!)
+# Environment variables (NEVER commit!)
 .env
 
 # Python
@@ -22,4 +22,17 @@ cache/
 # OS
 .DS_Store
 Thumbs.db
+
+# Research & other apps (not needed for Railway)
 GIT/
+*.md
+!README.md
+EMAIL_SUMMARY.txt
+kitten_tts_app.py
+personaplex_demo.py
+piper_tts_app.py
+tts_app.py
+tts_app.log
+voice_chat_server.py
+web_speech_demo.html
+heygenidea.html

@@ -1,88 +1,55 @@
-# VOICE - Speech Technology Research & Demos
+# Voice Chat with HeyGen Avatar
 
-This folder contains research and **working demos** for various speech technologies.
+A real-time voice chat application featuring a lip-synced AI avatar.
 
-## 📚 Research Documents
+## Features
 
-| File | Description |
-|------|-------------|
-| `01_KITTEN_TTS_RESEARCH.md` | KittenTTS - Ultra-lightweight TTS (<25MB) - *research only* |
-| `02_NVIDIA_PERSONAPLEX_RESEARCH.md` | NVIDIA PersonaPlex - Full-duplex conversational AI |
-| `03_WEB_SPEECH_API_RESEARCH.md` | Browser-native Speech Recognition & Synthesis |
+- 🎤 **Voice Input** - Web Speech API (browser-native STT)
+- 🧠 **AI Responses** - Azure OpenAI GPT
+- 🎭 **Talking Avatar** - HeyGen Streaming Avatar with lip-sync
+- 🔍 **Web Search** - Brave Search API for real-time info
 
-## 🚀 Working Demos
+## How It Works
 
-### ✅ Option 1: Web Speech API (Zero Setup) - TESTED
-Works entirely in-browser, no installation needed.
+1. You speak into your microphone
+2. Browser converts speech to text
+3. Azure OpenAI generates a response
+4. HeyGen avatar speaks the response with realistic lip-sync
+
+## Deployment
+
+### Railway (Recommended)
+
+1. Fork this repo
+2. Create a new project on [railway.app](https://railway.app)
+3. Connect your GitHub repo
+4. Add environment variables (see below)
+5. Deploy!
+
+### Environment Variables
+
+```
+AZURE_OPENAI_ENDPOINT=your-azure-endpoint
+AZURE_OPENAI_KEY=your-azure-key
+AZURE_OPENAI_DEPLOYMENT=gpt-4
+AZURE_OPENAI_API_VERSION=2024-02-15-preview
+HEYGEN_API_KEY=your-heygen-key
+BRAVE_API_KEY=your-brave-key (optional)
+```
+
+### Local Development
 
 ```bash
-open web_speech_demo.html
-```
-Features: Speech-to-text + Text-to-speech in browser
-
-### ✅ Option 2: Piper TTS (Fast Local Neural TTS) - RECOMMENDED
-Fast, offline neural TTS that works on Mac/Linux/Windows.
-
-```bash
-source ~/miniconda3/bin/activate voice
-pip install piper-tts pytz
-python piper_tts_app.py
-```
-Then open http://localhost:7861
-
-### ✅ Option 3: macOS TTS (Built-in Voices)
-Uses macOS `say` command - zero downloads.
-
-```bash
-source ~/miniconda3/bin/activate voice
-python tts_app.py
-```
-Then open http://localhost:7860
-
-### ⚠️ PersonaPlex (Requires NVIDIA A100/H100)
-Full-duplex conversational AI - **cannot run on MacBook**.
-See `personaplex_notes.md` for details if you have the hardware.
-
-### ⚠️ KittenTTS
-The package referenced in research may not be publicly available yet.
-Use **Piper TTS** as a working alternative.
-
-## 📁 Files
-
-```
-VOICE/
-├── README.md                         # This file
-├── requirements.txt                  # Python dependencies
-│
-├── 📄 Research
-├── 01_KITTEN_TTS_RESEARCH.md        # KittenTTS research
-├── 02_NVIDIA_PERSONAPLEX_RESEARCH.md # PersonaPlex research
-├── 03_WEB_SPEECH_API_RESEARCH.md    # Web Speech API research
-├── personaplex_notes.md             # PersonaPlex setup notes
-│
-├── 🎯 Working Demos
-├── web_speech_demo.html             # ✅ Browser STT/TTS (zero setup)
-├── piper_tts_app.py                 # ✅ Piper neural TTS (fast, local)
-└── tts_app.py                       # ✅ macOS built-in TTS
+pip install -r requirements.txt
+cp .env.example .env  # Edit with your keys
+python voice_chat_heygen_server.py
+# Open http://localhost:8001
 ```
 
-## 🎯 Comparison
+## Tech Stack
 
-| Feature | Piper TTS | Web Speech API | PersonaPlex |
-|---------|-----------|----------------|-------------|
-| **Type** | TTS only | STT + TTS | Full conversation |
-| **Size** | ~30MB/voice | Built-in | ~14GB |
-| **GPU** | No | No | Yes (A100/H100) |
-| **Offline** | Yes | Partial | Yes |
-| **Setup** | pip install | Zero | Complex |
-| **Quality** | Excellent | Good | Excellent |
-| **Mac Support** | ✅ | ✅ | ❌ |
-
-## 🔗 Links
-
-- Piper TTS: https://github.com/rhasspy/piper
-- PersonaPlex: https://github.com/NVIDIA/personaplex
-- Web Speech API: https://developer.mozilla.org/en-US/docs/Web/API/Web_Speech_API
-
----
-*Created: January 29, 2026*
+- **Backend**: FastAPI + Uvicorn
+- **Frontend**: Vanilla JS + Web Speech API
+- **AI**: Azure OpenAI
+- **Avatar**: HeyGen Streaming Avatar (WebRTC)
+- **Search**: Brave Search API
