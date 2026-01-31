@@ -954,7 +954,7 @@ HTML_CONTENT = '''
                 }
                 
                 const data = await response.json();
-                console.log('HeyGen response:', data);
+                console.log('HeyGen full response:', JSON.stringify(data, null, 2));
                 
                 // Check for error codes
                 if (data.code && data.code !== 100) {
@@ -964,6 +964,9 @@ HTML_CONTENT = '''
                 if (data.data && data.data.session_id) {
                     sessionId = data.data.session_id;
                     console.log('Session ID:', sessionId);
+                    console.log('data.data keys:', Object.keys(data.data));
+                    console.log('data.data.sdp:', data.data.sdp);
+                    console.log('typeof data.data.sdp:', typeof data.data.sdp);
                     await setupWebRTC(data.data);
                     
                     if (initSpeechRecognition()) {
@@ -1003,6 +1006,7 @@ HTML_CONTENT = '''
             
             if (!serverSdp) {
                 console.error('SDP extraction failed. sdpData was:', sdpData);
+                alert('SDP Debug Info:\n\nsdpData type: ' + typeof sdpData + '\nsdpData: ' + JSON.stringify(sdpData).substring(0, 500));
                 throw new Error('No SDP received from HeyGen - check console for details');
             }
             
