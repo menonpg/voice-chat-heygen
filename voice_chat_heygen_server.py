@@ -943,7 +943,14 @@ HTML_CONTENT = '''
         
         // Setup WebRTC
         async function setupWebRTC(sessionData) {
-            const { sdp: serverSdp, ice_servers2: iceServers } = sessionData;
+            // HeyGen returns sdp as {type, sdp} object, extract the actual SDP string
+            const sdpData = sessionData.sdp;
+            const serverSdp = typeof sdpData === 'string' ? sdpData : sdpData?.sdp;
+            const iceServers = sessionData.ice_servers2;
+            
+            if (!serverSdp) {
+                throw new Error('No SDP received from HeyGen');
+            }
             
             peerConnection = new RTCPeerConnection({
                 iceServers: iceServers || [
