@@ -920,9 +920,16 @@ HTML_CONTENT = '''
                 }
                 
                 const data = await response.json();
+                console.log('HeyGen response:', data);
+                
+                // Check for error codes
+                if (data.code && data.code !== 100) {
+                    throw new Error(data.message || `HeyGen error code: ${data.code}`);
+                }
                 
                 if (data.data && data.data.session_id) {
                     sessionId = data.data.session_id;
+                    console.log('Session ID:', sessionId);
                     await setupWebRTC(data.data);
                     
                     if (initSpeechRecognition()) {
@@ -943,13 +950,26 @@ HTML_CONTENT = '''
         
         // Setup WebRTC
         async function setupWebRTC(sessionData) {
+            console.log('sessionData:', sessionData);
+            console.log('sessionData.sdp:', sessionData.sdp);
+            
             // HeyGen returns sdp as {type, sdp} object, extract the actual SDP string
             const sdpData = sessionData.sdp;
-            const serverSdp = typeof sdpData === 'string' ? sdpData : sdpData?.sdp;
+            let serverSdp;
+            
+            if (typeof sdpData === 'string') {
+                serverSdp = sdpData;
+            } else if (sdpData && typeof sdpData === 'object' && sdpData.sdp) {
+                serverSdp = sdpData.sdp;
+            }
+            
+            console.log('Extracted serverSdp:', serverSdp ? serverSdp.substring(0, 100) : 'null');
+            
             const iceServers = sessionData.ice_servers2;
             
             if (!serverSdp) {
-                throw new Error('No SDP received from HeyGen');
+                console.error('SDP extraction failed. sdpData was:', sdpData);
+                throw new Error('No SDP received from HeyGen - check console for details');
             }
             
             peerConnection = new RTCPeerConnection({
