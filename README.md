@@ -34,7 +34,7 @@ You speak → Browser STT → Azure OpenAI → HeyGen Avatar speaks back
 |----------|-------------|
 | `AZURE_OPENAI_ENDPOINT` | Your Azure OpenAI endpoint URL |
 | `AZURE_OPENAI_KEY` | Your Azure OpenAI API key |
-| `AZURE_OPENAI_DEPLOYMENT` | Deployment name (e.g., `gpt-4`) |
+| `AZURE_OPENAI_DEPLOYMENT` | Deployment name (e.g., `gpt-4`, `gpt-5-chat`) |
 | `HEYGEN_API_KEY` | Your HeyGen API key |
 | `BRAVE_API_KEY` | *(Optional)* Brave Search API key |
 
@@ -54,7 +54,7 @@ pip install -r requirements.txt
 cat > .env << EOF
 AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com
 AZURE_OPENAI_KEY=your-key
-AZURE_OPENAI_DEPLOYMENT=gpt-4
+AZURE_OPENAI_DEPLOYMENT=gpt-5-chat
 HEYGEN_API_KEY=your-heygen-key
 BRAVE_API_KEY=your-brave-key
 EOF

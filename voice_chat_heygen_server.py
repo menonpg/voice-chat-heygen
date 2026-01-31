@@ -673,7 +673,7 @@ HTML_CONTENT = '''
 <body>
     <div class="container">
         <h1>🎭 Voice Chat with HeyGen Avatar</h1>
-        <p class="subtitle">Speak naturally • GPT-4 • Custom Avatar with your voice</p>
+        <p class="subtitle">Speak naturally • Azure OpenAI • Custom Avatar with your voice</p>
         
         <div id="globalStatus" class="status-bar">Configure your avatar settings and click Start Session</div>
         
